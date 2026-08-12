@@ -12,14 +12,13 @@ function handleFormSubmit(event) {
   }
 
   const cvv = document.getElementById("cvv").value;
-
   if (!/^[0-9]{3,4}$/.test(cvv)) {
     window.alert("Invalid CVV. It must be 3 or 4 digits!");
     return;
   }
 
   const cnumber = document.getElementById("cnumber").value;
-  if (!isValid(cnumber)) {
+  if (!/^[0-9]{13,16}$/.test(cnumber) || !isValid(cnumber)) {
     window.alert("Invalid card number!");
     return;
   }
@@ -28,5 +27,23 @@ function handleFormSubmit(event) {
 }
 
 function isValid(cnumber) {
-  return true;
+  let arr = cnumber
+    .split("")
+    .reverse()
+    .map((element) => parseInt(element));
+
+  const sum = arr.reduce(reducer, 0);
+
+  function reducer(accumulator, currentValue, currentIndex) {
+    currentIndex += 1;
+    if (currentIndex % 2 === 0) {
+      currentValue *= 2;
+      if (currentValue > 9) {
+        currentValue -= 9;
+      }
+    }
+    return accumulator + currentValue;
+  }
+
+  return sum % 10 === 0;
 }
